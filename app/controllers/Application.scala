@@ -5,9 +5,8 @@ import java.util.concurrent.TimeUnit
 import com.google.common.cache.{Cache, CacheBuilder}
 import javax.inject.Inject
 import model.{ChangeLogItem, DateTimeFormat}
-import play.api.Logger
 import play.api.libs.json.Json
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import services.ChangeLogService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,15 +20,13 @@ class Application @Inject()(cc: ControllerComponents, changeLogService: ChangeLo
 
   private val CACHE_KEY = "CHANGELOG"
 
-  def changeLog = Action.async {
-    val cached = cache.getIfPresent(CACHE_KEY)
-    val changelog = if (cached != null) {
-      Logger.info("Changelog returned from cache")
-      Future.successful(cached)
+  def changeLog: Action[AnyContent] = Action.async {
+    val cached = Option(cache.getIfPresent(CACHE_KEY))
+    val changelog = cached.map { cachedChangelog =>
+      Future.successful(cachedChangelog)
 
-    } else {
+    }.getOrElse {
       changeLogService.generateChangelog().map { changelogItems =>
-        Logger.info("Caching changelog")
         cache.put(CACHE_KEY, changelogItems)
         changelogItems
       }
