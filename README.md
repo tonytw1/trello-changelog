@@ -15,8 +15,31 @@ is public and should be included in the changelog.
 In return you will get a list of changelog items sorted in date descending order. The public date is the date the card was moved into the done column.
 
 
+## Output
+
+A list of [ChangeLogItem](app/model/ChangeLogItem.scala) in date descending order.
+
+```
+[
+  {
+    "title": "Bug fix. Widget ordering",
+    "description": "The widget thingamagig now outputs content right side round.",
+    "date": "2018-10-16T18:29:50.828Z"
+  },
+  {
+    "title": "Widgets now available",
+    "description": "The system can now produce widgets.",
+    "date": "2018-09-09T19:55:37.025Z"
+  }
+]
+```
 
 
+## Build
 
+Scala / Playframework / sbt with Docker plugin enabled.
 
+```
+sbt clean docker:publishLocal
+```
 
