@@ -1,36 +1,30 @@
 package services
 
 import javax.inject.Inject
-import model.TrelloCard
-import model.ChangeLogItem
+import model.{ChangeLogItem, TrelloAction, TrelloCard}
 import play.api.Configuration
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ChangeLogService @Inject()(configuration: Configuration, trelloService: TrelloService) {
+class ChangeLogService @Inject()(configuration: Configuration, trelloService: TrelloService, changeLogCalculator: ChangeLogCalculator) {
 
   private val list = configuration.get[String]("trello.done.list")
   private val label = configuration.get[String]("trello.public.label")
 
   def generateChangelog(): Future[Seq[ChangeLogItem]] = {
 
-    def releaseDate(card: TrelloCard) = trelloService.getCardActions(card.id).map { actions => // TODO doesn't deal with cards moved back from Done
-      val movedToDone = actions.find(a => a.data.listAfter.fold(false)(la => la.name == list))
-      movedToDone.map(a => a.date)
+    val eventualCardsWithActions = trelloService.getCards(label).flatMap { cards =>
+      Future.sequence(cards.map { card =>
+        trelloService.getCardActions(card.id).map { actions =>
+          (card, actions)
+        }
+      })
     }
 
-    def generateChangelogFromCards(cards: Seq[TrelloCard]): Future[Seq[ChangeLogItem]] = {
-      def changeLogItemsForDoneCards = Future.sequence(cards.map { c =>
-        releaseDate(c).map(_.map(rd => ChangeLogItem(c.name, c.desc, rd)))
-      }).map { cos =>
-        cos.flatten
-      }
-
-      changeLogItemsForDoneCards.map(_.sortBy(_.date.toDate).reverse)
+    eventualCardsWithActions.map { cardsWithActions: Seq[(TrelloCard, Seq[TrelloAction])] =>
+      changeLogCalculator.calculateChangelogFrom(cardsWithActions)
     }
-
-    trelloService.getCards(label).flatMap(generateChangelogFromCards)
   }
 
 }
