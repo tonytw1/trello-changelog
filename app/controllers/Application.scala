@@ -4,15 +4,15 @@ import java.util.concurrent.TimeUnit
 
 import com.google.common.cache.{Cache, CacheBuilder}
 import javax.inject.Inject
-import model.{ChangeLogItem, DateTimeFormat}
-import play.api.libs.json.Json
+import model.ChangeLogItem
+import play.api.libs.json.{JodaWrites, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import services.ChangeLogService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class Application @Inject()(cc: ControllerComponents, changeLogService: ChangeLogService) extends AbstractController(cc) {
+class Application @Inject()(cc: ControllerComponents, changeLogService: ChangeLogService) extends AbstractController(cc) with JodaWrites {
 
   private val cache: Cache[String, Seq[ChangeLogItem]] = CacheBuilder.newBuilder().
     expireAfterWrite(10, TimeUnit.MINUTES).
@@ -32,7 +32,6 @@ class Application @Inject()(cc: ControllerComponents, changeLogService: ChangeLo
       }
     }
 
-    implicit val df = DateTimeFormat
     implicit val cliw = Json.writes[ChangeLogItem]
     changelog.map { cl =>
       Ok(Json.toJson(cl))

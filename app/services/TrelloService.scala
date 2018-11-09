@@ -5,19 +5,18 @@ import com.netaporter.uri.dsl._
 import javax.inject.Inject
 import model._
 import play.api.Configuration
-import play.api.libs.json.Json
+import play.api.libs.json.{JodaReads, Json}
 import play.api.libs.ws.WSClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class TrelloService @Inject()(configuration: Configuration, ws: WSClient) {
+class TrelloService @Inject()(configuration: Configuration, ws: WSClient) extends JodaReads {
 
   private val TrelloApi = "https://api.trello.com/1"
   private val apiKey = configuration.get[String]("trello.api.key")
   private val apiToken = configuration.get[String]("trello.api.token")
 
-  implicit val df = DateTimeFormat
   implicit val talr = Json.reads[TrelloActionList]
   implicit val tadr = Json.reads[TrelloActionData]
   implicit val tar = Json.reads[TrelloAction]
