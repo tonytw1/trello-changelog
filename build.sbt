@@ -1,3 +1,5 @@
+import com.typesafe.sbt.packager.docker.DockerChmodType
+
 name := "trello-changelog"
 lazy val `trello-changelog` = (project in file(".")).enablePlugins(PlayScala)
 
@@ -14,5 +16,6 @@ libraryDependencies += "org.specs2" %% "specs2-core" % "4.10.0" % "test"
 enablePlugins(DockerPlugin)
 dockerBaseImage := "openjdk:10-jre"
 dockerExposedPorts in Docker := Seq(9000)
+dockerChmodType := DockerChmodType.UserGroupWriteExecute
 
 enablePlugins(GitVersioning)
