@@ -1,17 +1,17 @@
 package services
 
-import com.netaporter.uri.Uri
-import com.netaporter.uri.dsl._
+import io.lemonlabs.uri._
+import io.lemonlabs.uri.dsl._
 import javax.inject.Inject
 import model._
-import play.api.Configuration
+import play.api.{Configuration, Logging}
 import play.api.libs.json.{JodaReads, Json}
 import play.api.libs.ws.WSClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class TrelloService @Inject()(configuration: Configuration, ws: WSClient) extends JodaReads {
+class TrelloService @Inject()(configuration: Configuration, ws: WSClient) extends JodaReads with Logging {
 
   private val TrelloApi = "https://api.trello.com/1"
   private val apiKey = configuration.get[String]("trello.api.key")
@@ -47,12 +47,13 @@ class TrelloService @Inject()(configuration: Configuration, ws: WSClient) extend
         case 200 =>
           Json.parse(r.body).as[Seq[TrelloAction]]
         case _ =>
+          logger.warn("Trello API call failed: " + r.status + " / " + r.body)
           Seq()
       }
     }
   }
 
-  private def withTrelloAuth(uri: Uri): Uri = {
+  private def withTrelloAuth(uri: String): Uri = {
     uri.addParam("key", apiKey).addParam("token", apiToken)
   }
 

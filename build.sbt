@@ -1,15 +1,15 @@
 name := "trello-changelog"
 lazy val `trello-changelog` = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.13.1"
+
 libraryDependencies += ws
 libraryDependencies += guice
 
-libraryDependencies += "com.netaporter" %% "scala-uri" % "0.4.12"
-libraryDependencies += "com.google.guava" % "guava" % "27.0-jre"
-libraryDependencies += "com.typesafe.play" %% "play-json-joda" % "2.6.10"
+libraryDependencies += "io.lemonlabs" %% "scala-uri" % "2.2.2"
+libraryDependencies += "com.typesafe.play" %% "play-json-joda" % "2.9.0"
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.3.4" % "test"
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.10.0" % "test"
 
 enablePlugins(DockerPlugin)
 dockerBaseImage := "openjdk:10-jre"
