@@ -15,12 +15,12 @@ class ChangeLogCalculator @Inject()() {
 
     val doneCards = cardsWithMoves.filter(cwa => currentlyMovedToDone(cwa._2))
 
-    doneCards.map { cwa =>
+    doneCards.flatMap { cwa =>
       val releaseDate = cwa._2.headOption.map(a => a.date)
       releaseDate.map { rd =>
         ChangeLogItem(cwa._1.name, cwa._1.desc, rd)
       }
-    }.flatten
+    }
   }
 
 }
