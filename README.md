@@ -37,9 +37,14 @@ A list of [ChangeLogItem](app/model/ChangeLogItem.scala) in date descending orde
 
 ## Build
 
-Scala / Playframework / sbt with Docker plugin enabled.
+sbt assembly to produce an executable jar file.
 
 ```
-sbt clean docker:publishLocal
+sbt clean assembly
 ```
 
+Which can be run with a production configuration file like so:
+
+```
+java -Dconfig.file=trello-changelog.conf -jar target/scala-2.13/trello-changelog-assembly-0.1.0-SNAPSHOT.jar
+```
