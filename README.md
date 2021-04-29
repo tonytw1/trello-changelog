@@ -33,13 +33,3 @@ A list of [ChangeLogItem](app/model/ChangeLogItem.scala) in date descending orde
   }
 ]
 ```
-
-
-## Build
-
-Scala / Playframework / sbt with Docker plugin enabled.
-
-```
-sbt clean docker:publishLocal
-```
-
