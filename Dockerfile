@@ -1,4 +1,4 @@
-FROM openjdk:17-jre
+FROM eclipse-temurin:17
 COPY target/universal/trello-changelog-1.0.zip /tmp
 RUN /usr/bin/unzip /tmp/trello-changelog-1.0.zip
 RUN ls -l /
