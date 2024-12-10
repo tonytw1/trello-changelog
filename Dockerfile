@@ -1,5 +1,6 @@
 FROM eclipse-temurin:21-jre-jammy
 COPY target/universal/trello-changelog-1.0.zip /tmp
+RUN apt-get update
 RUN apt-get install unzip
 RUN /usr/bin/unzip /tmp/trello-changelog-1.0.zip
 RUN ls -l /
