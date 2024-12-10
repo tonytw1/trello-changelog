@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-alpine
+FROM eclipse-temurin:21-jre-jammy
 COPY target/universal/trello-changelog-1.0.zip /tmp
 RUN /usr/bin/unzip /tmp/trello-changelog-1.0.zip
 RUN ls -l /
